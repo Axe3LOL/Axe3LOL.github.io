@@ -1,11 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>axe3 lol team</title>
-</head>
-<body>
-  hello, world
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LoL 分组程序</title>
+
+    <style>
+      .wrapper {
+        display: flex;
+      }
+      .groups {
+        display: flex;
+      }
+      .group {
+        width: 200px;
+      }
+      .checkboxs {
+        width: 500px;
+        font-size: 20px;
+      }
+    </style>
+
+    <script src="https://cdn.staticfile.org/vue/2.6.11/vue.min.js
+"></script>
+  </head>
+  <body>
+    <div id="app">
+      <div class="wrapper">
+        <div class="checkboxs">
+          <div>
+            <div v-for="p in people" :key="p">
+              <input type="checkbox" :id="p" :value="p" v-model="picked" />
+              <label :for="p">{{p}}</label>
+            </div>
+          </div>
+          <div>
+            <button @click="handleClick">分组</button>
+            <button @click="handleClear">清空</button>
+          </div>
+          <div>
+            已选{{picked.length}} / 10
+          </div>
+        </div>
+        <div class="groups">
+          <div class="group">
+            <div>红色方：</div>
+            <div v-for="p in left" :key="p">
+              {{p}}
+            </div>
+          </div>
+          <div class="group">
+            <div>蓝色方：</div>
+            <div v-for="p in right" :key="p">
+              {{p}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
+
+<script>
+  const vm = new Vue({
+    el: '#app',
+    data() {
+      return {
+        people: [
+          '时光',
+          'dky',
+          'dearest',
+          '肥皂',
+          '箭离弦',
+          '昀',
+          'PX',
+          'Lip',
+          '小帆帆',
+          '宇直',
+          '9527',
+          'ES',
+          'wiizard',
+          '盖伦',
+          'M',
+          'ji',
+          'phoe',
+          'rocking',
+          'The ro',
+        ],
+        picked: [],
+        left: [],
+        right: [],
+      }
+    },
+    mounted() {
+      try {
+        const picked = localStorage.getItem('picked')
+        const arr = JSON.parse(picked)
+        if (Array.isArray(arr)) {
+          this.picked = arr
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    methods: {
+      handleClick() {
+        const [left, right] = random(this.picked)
+        localStorage.setItem('picked', JSON.stringify(this.picked))
+        this.left = left
+        this.right = right
+      },
+      handleClear() {
+        this.picked = []
+        localStorage.clear()
+      },
+    },
+  })
+
+  function random(list) {
+    const left = []
+    const right = []
+
+    const arr = [...list]
+
+    let flag = true
+    while (arr.length > 0) {
+      const idx = Math.floor(Math.random() * arr.length)
+      const person = arr.splice(idx, 1)[0]
+
+      if (flag) {
+        left.push(person)
+      } else {
+        right.push(person)
+      }
+
+      flag = !flag
+    }
+    return [left, right]
+  }
+</script>
